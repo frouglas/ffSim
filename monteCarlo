@@ -1,0 +1,30 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+Created on Tue Nov 14 04:00:59 2017
+
+@author: frouglas
+"""
+
+import simulator as sm
+import parse as pr
+import pandas as pd
+import pickle
+
+totSims = 10000
+
+leagueDB = pr.loadLeague(0)
+
+simResults = pd.DataFrame()
+
+for i in range(totSims):
+    if (i + 1) % 100 == 0:
+        print('     processed ' + str(i) + "...")
+    thisSim = sm.runSim(leagueDB,i)
+    if len(simResults)==0:
+        simResults = thisSim
+    else:
+        simResults = simResults.append(thisSim)
+    
+with open("sim.db","wb") as lFile:
+    pickle.dump(simResults,lFile)

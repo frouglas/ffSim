@@ -10,16 +10,18 @@ import simulator as sm
 import parse as pr
 import pandas as pd
 import pickle
+import numpy as np
 
 totSims = 10000
 
 leagueDB = pr.loadLeague(0)
 
 simResults = pd.DataFrame()
+np.random.seed(0)
 
 for i in range(totSims):
     if (i + 1) % 100 == 0:
-        print('     processed ' + str(i) + "...")
+        print('     processed ' + str(i + 1) + "...")
     thisSim = sm.runSim(leagueDB,i)
     if len(simResults)==0:
         simResults = thisSim

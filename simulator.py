@@ -24,7 +24,9 @@ def runSim(thisLeagueDB,simNo):
                                     'tPts','ptsA','simPts','simPtsA','totPts',
                                     'totPtsA'])
     
-    for team in league.teams:
+    teamList = league.teams
+    
+    for team in teamList:
         entryID = str(simNo) + "." + str(team.team_id)
         thisEntry = pd.Series({'entryID':entryID,'team_id':team.team_id, 
                                'simulation': simNo, 'team_name':team.team_name,
@@ -107,6 +109,13 @@ def runSim(thisLeagueDB,simNo):
     ptsWinner = currScores.index(max(currScores))
     simDB.iloc[ptsWinner,-1] = 1
     simDB.loc[:,'finish'] = finishRanks
+    
+    # simulate playoff game 1 (3 v 6)
+    
+    teamsList = list(teamList)
+    
+    pGm3Home = teamList[finishRanks.index(3)].team_id
+    pauseHere = 1
            
     return simDB     
             

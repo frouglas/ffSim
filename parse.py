@@ -10,6 +10,7 @@ This is a temporary script file.
 from espnff import League
 import pickle
 import dataStructures as ds
+import sys
 
 
 
@@ -28,6 +29,13 @@ def parseWeek(league,wk):
     return weekOut
 
 def loadLeague(reload = 0):
+    if sys.version_info[0] < 2:
+        print("     requires python 2 or above")
+    elif sys.version_info[0] == 2:
+        picklePath = "lea2.gue"
+    else:
+        picklePath = "lea.gue"
+    
     leagueID = 412124
     year = 2017
     weeksPlayed = 0
@@ -36,8 +44,6 @@ def loadLeague(reload = 0):
         league = League(leagueID, year)
         fSchedule = []
         for i in range(1,14):
-            if i>10:
-                pauseHere = 1
             thisWeek = parseWeek(league,i)
             if thisWeek[0].homeScore == 0:
                 played = 0
@@ -49,10 +55,10 @@ def loadLeague(reload = 0):
         for i in range(len(league.teams)):
             teamKey[league.teams[i].team_id] = i 
         leagueDB = [league,fSchedule,weeksPlayed, teamKey]
-        with open("lea.gue","wb") as lFile:
+        with open(picklePath,"wb") as lFile:
             pickle.dump(leagueDB,lFile)
     else:    
-        with open("lea.gue","rb") as lFile:
+        with open(picklePath,"rb") as lFile:
             leagueDB = pickle.load(lFile)
     return leagueDB
     

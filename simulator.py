@@ -84,8 +84,9 @@ def runSim(thisLeagueDB,simNo):
             bClinch = sorted(currWins)[-3]+len(weeks)-weekNo
             pClinch = sorted(currWins)[-7]+len(weeks)-weekNo
             for i in range(len(pList)):
-                if ((currWins[i]>pClinch) & (pList[i]==-1)):
-                    pList[i] = weekNo + 1
+                if currWins[i]>pClinch:
+                    if pList[i]==-1:
+                        pList[i] = weekNo + 1
                     if ((currWins[i]>bClinch) & (bList[i]==-1)):
                         bList[i] = weekNo + 1
         else:
@@ -94,14 +95,17 @@ def runSim(thisLeagueDB,simNo):
             currSorted = sorted(currSort)
             finishRanks = [12 - currSorted.index(i) for i in currSort]
             for i in range(len(finishRanks)):
-                if ((finishRanks[i] <= 6) & (pList[i]==-1)):
-                    pList[i] = weekNo + 1
+                if finishRanks[i] <= 6:
+                    if pList[i]==-1:
+                        pList[i] = weekNo + 1
                     if ((finishRanks[i] <=2) & (bList[i]==-1)):
                         bList[i] = weekNo + 1                    
         simDB.loc[:,'playoffs'] = pList
         simDB.loc[:,'bye'] = bList
     
-    
+    simDB['maxPts'] = pd.Series(0,index=simDB.index)
+    ptsWinner = currScores.index(max(currScores))
+    simDB.iloc[ptsWinner,-1] = 1
     simDB.loc[:,'finish'] = finishRanks
            
     return simDB     

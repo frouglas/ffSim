@@ -95,6 +95,7 @@ def runSim(thisLeagueDB,simNo):
             currScores = list(simDB['totPts'])
             currSort = [currWins[i] + currScores[i]/10000 for i in range(len(currScores))]
             currSorted = sorted(currSort)
+            tieRanks = [12 - sorted(currScores).index(i) for i in currScores]
             finishRanks = [12 - currSorted.index(i) for i in currSort]
             for i in range(len(finishRanks)):
                 if finishRanks[i] <= 6:
@@ -112,9 +113,9 @@ def runSim(thisLeagueDB,simNo):
     
     # simulate playoff game 1 (3 v 6)
     
-    teamsList = list(teamList)
     
     pGm3Home = teamList[finishRanks.index(3)].team_id
+    
     pauseHere = 1
            
     return simDB     

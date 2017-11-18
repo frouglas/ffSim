@@ -19,14 +19,14 @@ if sys.version_info[0] < 2:
     print("     requires python 2 or above")
 elif sys.version_info[0] == 2:
     picklePath = "lea2.gue"
-    simPath = 'sim2.res'
+    simPath = 'sim2_test.res'
 else:
     picklePath = "lea.gue"
-    simPath = 'sim.res'
+    simPath = 'sim_test.res'
 
 totSims = 10000
 
-leagueDB = pr.loadLeague(1)
+leagueDB = pr.loadLeague(0)
 
 simResults = pd.DataFrame()
 np.random.seed(0)

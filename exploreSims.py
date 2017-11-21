@@ -12,9 +12,9 @@ import numpy as np
 if sys.version_info[0] < 2:
     print("     requires python 2 or above")
 elif sys.version_info[0] == 2:
-    simPath = 'sim2.res'
+    simPath = 'sim2_test.res'
 else:
-    simPath = 'sim.res'
+    simPath = 'sim_test.res'
 
 with open(simPath,"rb") as lFile:
     simDB = pickle.load(lFile)
@@ -50,14 +50,6 @@ for i in list(simResults.team_name.unique()):
         if i==j:
             continue
         subDB = scenDB[scenDB['team_name']==j]
-        if len(subDB.wk10_win.unique()) == 1:
-            winLoss = subDB.wk10_win.unique()[0]
-            if winLoss == 1:
-                thisStr = 'win'
-            else:
-                thisStr = 'lose'
-            print('          needs ' + j + ' to ' + thisStr + ' in week 10')
-            noReqs = 0
         if len(subDB.wk11_win.unique()) == 1:
             winLoss = subDB.wk11_win.unique()[0]
             if winLoss == 1:

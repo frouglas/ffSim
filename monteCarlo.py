@@ -25,8 +25,7 @@ else:
     simPath = 'sim_test.res'
 
 totSims = 10000
-
-leagueDB = pr.loadLeague(0)
+leagueDB = pr.loadLeague(1)
 
 simResults = pd.DataFrame()
 np.random.seed(0)

@@ -18,7 +18,7 @@ def runSim(thisLeagueDB,simNo):
     teamKey = thisLeagueDB[3]
     
     simDB = pd.DataFrame(columns = ['entryID','simulation','team_id','team_name',
-                                    'bye','playoffs','finish','wins','losses',
+                                    'bye','playoffs','playEligible','finish','wins','losses',
                                     'simWins',
                                     'simLosses','totWins','totLosses',
                                     'tPts','ptsA','simPts','simPtsA','totPts',
@@ -30,7 +30,8 @@ def runSim(thisLeagueDB,simNo):
         entryID = str(simNo) + "." + str(team.team_id)
         thisEntry = pd.Series({'entryID':entryID,'team_id':team.team_id, 
                                'simulation': simNo, 'team_name':team.team_name,
-                               'bye':-1, 'playoffs':-1, 'finish':-1,'wins':team.wins, 
+                               'bye':-1, 'playoffs':-1, 'playEligible':-1, 
+                               'finish':-1,'wins':team.wins, 
                                'losses':team.losses,'simWins':0,'simLosses':0,
                                'totWins':team.wins,'totLosses':team.losses,
                                'tPts':team.points_for,
@@ -95,7 +96,6 @@ def runSim(thisLeagueDB,simNo):
             currScores = list(simDB['totPts'])
             currSort = [currWins[i] + currScores[i]/10000 for i in range(len(currScores))]
             currSorted = sorted(currSort)
-            tieRanks = [12 - sorted(currScores).index(i) for i in currScores]
             finishRanks = [12 - currSorted.index(i) for i in currSort]
             for i in range(len(finishRanks)):
                 if finishRanks[i] <= 6:
@@ -106,16 +106,20 @@ def runSim(thisLeagueDB,simNo):
         simDB.loc[:,'playoffs'] = pList
         simDB.loc[:,'bye'] = bList
     
+    pWinMin = sorted(currWins)[5]
+    pEligible = [(pWinMin<=i)*1 for i in currWins]
     simDB['maxPts'] = pd.Series(0,index=simDB.index)
     ptsWinner = currScores.index(max(currScores))
     simDB.iloc[ptsWinner,-1] = 1
     simDB.loc[:,'finish'] = finishRanks
+    simDB.loc[:,'playEligible'] = pEligible
+    
     
     # simulate playoff game 1 (3 v 6)
     
     
     pGm3Home = teamList[finishRanks.index(3)].team_id
-    
+    pGm3Away = teamList[finishRank.index(6)].team_id
     pauseHere = 1
            
     return simDB     

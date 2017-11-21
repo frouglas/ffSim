@@ -44,7 +44,7 @@ for i in list(simResults.team_name.unique()):
         print('-----------------------')
         continue
     else:
-        print('     playoff requirements:')
+        print('     playoff requirements (' + str(len(scenDB)/12) + '):')
         noReqs = 1
     for j in list(simResults.team_name.unique()):
         if i==j:
@@ -56,7 +56,7 @@ for i in list(simResults.team_name.unique()):
                 thisStr = 'win'
             else:
                 thisStr = 'lose'
-            print('          needs ' + j + ' to ' + thisStr + ' in week 11')
+            print('          needs ' + j + ' to ' + thisStr + ' in week 12')
             noReqs = 0
         if len(subDB.wk12_win.unique()) == 1:
             winLoss = subDB.wk12_win.unique()[0]
@@ -64,7 +64,7 @@ for i in list(simResults.team_name.unique()):
                 thisStr = 'win'
             else:
                 thisStr = 'lose'
-            print('          needs ' + j + ' to ' + thisStr + ' in week 12')
+            print('          needs ' + j + ' to ' + thisStr + ' in week 13')
             noReqs = 0
     if noReqs == 1:
         print('          NONE')

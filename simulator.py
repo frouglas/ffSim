@@ -14,15 +14,15 @@ import numpy as np
 def runSim(thisLeagueDB,simNo):
     league = thisLeagueDB[0]
     weeks = thisLeagueDB[1]
-    wksPlayed = thisLeagueDB[2]
+    wksPlayed = 11
     teamKey = thisLeagueDB[3]
     
     simDB = pd.DataFrame(columns = ['entryID','simulation','team_id','team_name',
-                                    'bye','playoffs','playEligible','finish','wins','losses',
+                                    'bye','byeEligible','playoffs','playEligible','finish','wins','losses',
                                     'simWins',
                                     'simLosses','totWins','totLosses',
                                     'tPts','ptsA','simPts','simPtsA','totPts',
-                                    'totPtsA'])
+                                    'totPtsA','winnings'])
     
     teamList = league.teams
     
@@ -30,14 +30,14 @@ def runSim(thisLeagueDB,simNo):
         entryID = str(simNo) + "." + str(team.team_id)
         thisEntry = pd.Series({'entryID':entryID,'team_id':team.team_id, 
                                'simulation': simNo, 'team_name':team.team_name,
-                               'bye':-1, 'playoffs':-1, 'playEligible':-1, 
+                               'bye':-1, 'byeEligible':0, 'playoffs':-1, 'playEligible':0, 
                                'finish':-1,'wins':team.wins, 
                                'losses':team.losses,'simWins':0,'simLosses':0,
                                'totWins':team.wins,'totLosses':team.losses,
                                'tPts':team.points_for,
                                'ptsA':team.points_against,'simPts':0,
                                'simPtsA':0,'totPts':team.points_for,
-                               'totPtsA':team.points_against})
+                               'totPtsA':team.points_against,'winnings':0})
         simDB = simDB.append(thisEntry,ignore_index=True)
         
     simDB = simDB.set_index('entryID')
@@ -106,21 +106,117 @@ def runSim(thisLeagueDB,simNo):
         simDB.loc[:,'playoffs'] = pList
         simDB.loc[:,'bye'] = bList
     
-    pWinMin = sorted(currWins)[5]
+    pWinMin = sorted(currWins)[-6]
+    bWinMin = sorted(currWins)[-2]
     pEligible = [(pWinMin<=i)*1 for i in currWins]
+    bEligible = [(bWinMin<=i)*1 for i in currWins]
     simDB['maxPts'] = pd.Series(0,index=simDB.index)
     ptsWinner = currScores.index(max(currScores))
+    
     simDB.iloc[ptsWinner,-1] = 1
+    ptsWinID = str(simNo) + "." + str(teamList[ptsWinner].team_id)
+    simDB.loc[ptsWinID,'winnings'] = simDB.loc[ptsWinID,'winnings'] + 250
     simDB.loc[:,'finish'] = finishRanks
     simDB.loc[:,'playEligible'] = pEligible
+    simDB.loc[:,'byeEligible'] = bEligible
     
+    
+    p1Win = 'p1_win'
+    simDB[p1Win] = pd.Series(0,index=simDB.index)
     
     # simulate playoff game 1 (3 v 6)
     
     
-    pGm3Home = teamList[finishRanks.index(3)].team_id
-    pGm3Away = teamList[finishRank.index(6)].team_id
-    pauseHere = 1
-           
+    pGm1Home = teamList[finishRanks.index(3)]
+    pGm1Away = teamList[finishRanks.index(6)]
+    pGm1HScores = np.array(pGm1Home.scores[:wksPlayed])
+    pGm1HSim = np.random.normal(np.mean(pGm1HScores),np.std(pGm1HScores))
+    pGm1AScores = np.array(pGm1Away.scores[:wksPlayed])
+    pGm1ASim = np.random.normal(np.mean(pGm1AScores),np.std(pGm1HScores))
+    
+    if pGm1HSim > pGm1ASim:
+        pGm3Away = pGm1Home
+    else:
+        pGm3Away = pGm1Away
+    
+    p1WTeam = str(simNo) + "." + str(pGm3Away.team_id)
+    simDB.loc[p1WTeam,p1Win] = 1    
+        
+    # simulate playoff game 2 (4 v 5)
+    
+    pGm2Home = teamList[finishRanks.index(4)]
+    pGm2Away = teamList[finishRanks.index(5)]
+    pGm2HScores = np.array(pGm2Home.scores[:wksPlayed])
+    pGm2HSim = np.random.normal(np.mean(pGm2HScores),np.std(pGm2HScores))
+    pGm2AScores = np.array(pGm2Away.scores[:wksPlayed])
+    pGm2ASim = np.random.normal(np.mean(pGm2AScores),np.std(pGm2HScores))
+    
+    if pGm2HSim > pGm2ASim:
+        pGm4Away = pGm2Home
+    else:
+        pGm4Away = pGm2Away
+    
+    p2WTeam = str(simNo) + "." + str(pGm4Away.team_id)
+    simDB.loc[p2WTeam,p1Win] = 1  
+    
+    p2Win = 'p2_win'
+    simDB[p2Win] = pd.Series(0,index=simDB.index)
+    
+    # simulate playoff game 3 (2 v winner of game 1)
+    
+    
+    pGm3Home = teamList[finishRanks.index(2)]
+    pGm3HScores = np.array(pGm3Home.scores[:wksPlayed])
+    pGm3HSim = np.random.normal(np.mean(pGm3HScores),np.std(pGm3HScores))
+    pGm3AScores = np.array(pGm3Away.scores[:wksPlayed])
+    pGm3ASim = np.random.normal(np.mean(pGm3AScores),np.std(pGm3HScores))
+    
+    if pGm3HSim > pGm3ASim:
+        pGm5Away = pGm3Home
+    else:
+        pGm5Away = pGm3Away
+    
+    p3WTeam = str(simNo) + "." + str(pGm5Away.team_id)
+    simDB.loc[p3WTeam,p2Win] = 1    
+        
+    # simulate playoff game 4 (1 v winner of game 2)
+    
+    pGm4Home = teamList[finishRanks.index(1)]
+    pGm4HScores = np.array(pGm4Home.scores[:wksPlayed])
+    pGm4HSim = np.random.normal(np.mean(pGm4HScores),np.std(pGm4HScores))
+    pGm4AScores = np.array(pGm4Away.scores[:wksPlayed])
+    pGm4ASim = np.random.normal(np.mean(pGm4AScores),np.std(pGm4HScores))
+    
+    if pGm4HSim > pGm4ASim:
+        pGm5Home = pGm4Home
+    else:
+        pGm5Home = pGm4Away
+    
+    p4WTeam = str(simNo) + "." + str(pGm5Home.team_id)
+    simDB.loc[p4WTeam,p2Win] = 1  
+
+    p3Win = 'p3_win'
+    simDB[p3Win] = pd.Series(0,index=simDB.index)
+    
+    # simulate playoff game 5 (championship game)
+    
+    pGm5HScores = np.array(pGm5Home.scores[:wksPlayed])
+    pGm5HSim = np.random.normal(np.mean(pGm5HScores),np.std(pGm5HScores))
+    pGm5AScores = np.array(pGm5Away.scores[:wksPlayed])
+    pGm5ASim = np.random.normal(np.mean(pGm5AScores),np.std(pGm5HScores))
+    
+    if pGm5HSim > pGm5ASim:
+        champion = pGm5Home
+        runUp = pGm5Away
+    else:
+        champion = pGm5Away
+        runUp = pGm5Home
+    
+    champTeam = str(simNo) + "." + str(champion.team_id)
+    runTeam = str(simNo) + "." + str(runUp.team_id)
+    simDB.loc[champTeam,p3Win] = 1
+    simDB.loc[champTeam,'winnings'] = simDB.loc[champTeam,'winnings'] + 700
+    simDB.loc[runTeam,'winnings'] = simDB.loc[runTeam,'winnings'] + 250    
+
     return simDB     
             

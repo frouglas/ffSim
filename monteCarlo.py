@@ -24,7 +24,7 @@ else:
     picklePath = "lea.gue"
     simPath = 'sim_test.res'
 
-totSims = 10
+totSims = 5000
 leagueDB = pr.loadLeague(1)
 
 simResults = pd.DataFrame()

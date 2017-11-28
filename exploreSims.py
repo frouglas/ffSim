@@ -37,14 +37,18 @@ for i in list(simResults.team_name.unique()):
     print('     bye odds:       ' + str(propBye) + '%')
     propMaxPts = round((float(len(teamSlice[teamSlice['maxPts']==1]))/ dbSize)*100,2)
     print('     max point odds: ' + str(propMaxPts) + '%')
-    tPlayoffs = teamSlice[teamSlice['playoffs']!=-1]
+    propChamp = round((float(len(teamSlice[teamSlice['p3_win']==1]))/ dbSize)*100,2)
+    print('     championship odds: ' + str(propChamp) + '%')
+    expWin = round(np.mean(list(teamSlice['winnings'])),2)
+    print('     expected winnings: $' + str(expWin))
+    tPlayoffs = teamSlice[teamSlice['playEligible']!=0]
     playoffScens = list(tPlayoffs.simulation.unique())
     scenDB = simResults.loc[simResults['simulation'].isin(playoffScens)]
     if len(scenDB) == 0:
         print('-----------------------')
         continue
     else:
-        print('     playoff requirements:')
+        print('     playoff requirements (' + str(len(scenDB)/12) + '):')
         noReqs = 1
     for j in list(simResults.team_name.unique()):
         if i==j:
@@ -56,7 +60,7 @@ for i in list(simResults.team_name.unique()):
                 thisStr = 'win'
             else:
                 thisStr = 'lose'
-            print('          needs ' + j + ' to ' + thisStr + ' in week 11')
+            print('          needs ' + j + ' to ' + thisStr + ' in week 12')
             noReqs = 0
         if len(subDB.wk12_win.unique()) == 1:
             winLoss = subDB.wk12_win.unique()[0]
@@ -64,10 +68,40 @@ for i in list(simResults.team_name.unique()):
                 thisStr = 'win'
             else:
                 thisStr = 'lose'
-            print('          needs ' + j + ' to ' + thisStr + ' in week 12')
+            print('          needs ' + j + ' to ' + thisStr + ' in week 13')
             noReqs = 0
     if noReqs == 1:
         print('          NONE')
+    noReqs = 1
+    tBye = teamSlice[teamSlice['byeEligible']!=0]
+    byeScens = list(tBye.simulation.unique())
+    byeDB = simResults.loc[simResults['simulation'].isin(byeScens)]
+    if len(byeDB) == 0:
+        print('-----------------------')
+        continue
+    else:
+        print('     bye requirements (' + str(len(byeDB)/12) + '):')
+        noReqs = 1
+    for j in list(simResults.team_name.unique()):
+        if i==j:
+            continue
+        subDB = byeDB[byeDB['team_name']==j]
+        if len(subDB.wk11_win.unique()) == 1:
+            winLoss = subDB.wk11_win.unique()[0]
+            if winLoss == 1:
+                thisStr = 'win'
+            else:
+                thisStr = 'lose'
+            print('          needs ' + j + ' to ' + thisStr + ' in week 12')
+            noReqs = 0
+        if len(subDB.wk12_win.unique()) == 1:
+            winLoss = subDB.wk12_win.unique()[0]
+            if winLoss == 1:
+                thisStr = 'win'
+            else:
+                thisStr = 'lose'
+            print('          needs ' + j + ' to ' + thisStr + ' in week 13')
+            noReqs = 0
     print('-----------------------')
     
 

@@ -16,6 +16,7 @@ def runSim(thisLeagueDB,simNo):
     weeks = thisLeagueDB[1]
     wksPlayed = thisLeagueDB[2]
     teamKey = thisLeagueDB[3]
+    useScores = 5
     
     simDB = pd.DataFrame(columns = ['entryID','simulation','team_id','team_name',
                                     'bye','byeEligible','playoffs','playEligible','finish','wins','losses',
@@ -51,10 +52,10 @@ def runSim(thisLeagueDB,simNo):
         thisWeek = weeks[weekNo]
         for game in thisWeek[0]:
             hTeam = league.teams[teamKey[game.homeTeam]]
-            hTeamScores = np.array(hTeam.scores[:wksPlayed])
+            hTeamScores = np.array(hTeam.scores[wksPlayed-useScores:wksPlayed])
             hTeamSim = np.random.normal(np.mean(hTeamScores),np.std(hTeamScores))
             aTeam = league.teams[teamKey[game.awayTeam]]
-            aTeamScores = np.array(aTeam.scores[:wksPlayed])
+            aTeamScores = np.array(aTeam.scores[wksPlayed-useScores:wksPlayed])
             aTeamSim = np.random.normal(np.mean(aTeamScores),np.std(aTeamScores))
             aTeamID = str(simNo) + "." + str(aTeam.team_id)
             hTeamID = str(simNo) + "." + str(hTeam.team_id)
@@ -129,9 +130,9 @@ def runSim(thisLeagueDB,simNo):
     
     pGm1Home = teamList[finishRanks.index(3)]
     pGm1Away = teamList[finishRanks.index(6)]
-    pGm1HScores = np.array(pGm1Home.scores[:wksPlayed])
+    pGm1HScores = np.array(pGm1Home.scores[wksPlayed-useScores:wksPlayed])
     pGm1HSim = np.random.normal(np.mean(pGm1HScores),np.std(pGm1HScores))
-    pGm1AScores = np.array(pGm1Away.scores[:wksPlayed])
+    pGm1AScores = np.array(pGm1Away.scores[wksPlayed-useScores:wksPlayed])
     pGm1ASim = np.random.normal(np.mean(pGm1AScores),np.std(pGm1HScores))
     
     if pGm1HSim > pGm1ASim:
@@ -146,9 +147,9 @@ def runSim(thisLeagueDB,simNo):
     
     pGm2Home = teamList[finishRanks.index(4)]
     pGm2Away = teamList[finishRanks.index(5)]
-    pGm2HScores = np.array(pGm2Home.scores[:wksPlayed])
+    pGm2HScores = np.array(pGm2Home.scores[wksPlayed-useScores:wksPlayed])
     pGm2HSim = np.random.normal(np.mean(pGm2HScores),np.std(pGm2HScores))
-    pGm2AScores = np.array(pGm2Away.scores[:wksPlayed])
+    pGm2AScores = np.array(pGm2Away.scores[wksPlayed-useScores:wksPlayed])
     pGm2ASim = np.random.normal(np.mean(pGm2AScores),np.std(pGm2HScores))
     
     if pGm2HSim > pGm2ASim:
@@ -166,9 +167,9 @@ def runSim(thisLeagueDB,simNo):
     
     
     pGm3Home = teamList[finishRanks.index(2)]
-    pGm3HScores = np.array(pGm3Home.scores[:wksPlayed])
+    pGm3HScores = np.array(pGm3Home.scores[wksPlayed-useScores:wksPlayed])
     pGm3HSim = np.random.normal(np.mean(pGm3HScores),np.std(pGm3HScores))
-    pGm3AScores = np.array(pGm3Away.scores[:wksPlayed])
+    pGm3AScores = np.array(pGm3Away.scores[wksPlayed-useScores:wksPlayed])
     pGm3ASim = np.random.normal(np.mean(pGm3AScores),np.std(pGm3HScores))
     
     if pGm3HSim > pGm3ASim:
@@ -182,9 +183,9 @@ def runSim(thisLeagueDB,simNo):
     # simulate playoff game 4 (1 v winner of game 2)
     
     pGm4Home = teamList[finishRanks.index(1)]
-    pGm4HScores = np.array(pGm4Home.scores[:wksPlayed])
+    pGm4HScores = np.array(pGm4Home.scores[wksPlayed-useScores:wksPlayed])
     pGm4HSim = np.random.normal(np.mean(pGm4HScores),np.std(pGm4HScores))
-    pGm4AScores = np.array(pGm4Away.scores[:wksPlayed])
+    pGm4AScores = np.array(pGm4Away.scores[wksPlayed-useScores:wksPlayed])
     pGm4ASim = np.random.normal(np.mean(pGm4AScores),np.std(pGm4HScores))
     
     if pGm4HSim > pGm4ASim:
@@ -200,9 +201,9 @@ def runSim(thisLeagueDB,simNo):
     
     # simulate playoff game 5 (championship game)
     
-    pGm5HScores = np.array(pGm5Home.scores[:wksPlayed])
+    pGm5HScores = np.array(pGm5Home.scores[wksPlayed-useScores:wksPlayed])
     pGm5HSim = np.random.normal(np.mean(pGm5HScores),np.std(pGm5HScores))
-    pGm5AScores = np.array(pGm5Away.scores[:wksPlayed])
+    pGm5AScores = np.array(pGm5Away.scores[wksPlayed-useScores:wksPlayed])
     pGm5ASim = np.random.normal(np.mean(pGm5AScores),np.std(pGm5HScores))
     
     if pGm5HSim > pGm5ASim:

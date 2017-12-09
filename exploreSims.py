@@ -62,14 +62,6 @@ for i in list(simResults.team_name.unique()):
 #                thisStr = 'lose'
 #            print('          needs ' + j + ' to ' + thisStr + ' in week 12')
 #            noReqs = 0
-        if len(subDB.wk12_win.unique()) == 1:
-            winLoss = subDB.wk12_win.unique()[0]
-            if winLoss == 1:
-                thisStr = 'win'
-            else:
-                thisStr = 'lose'
-            print('          needs ' + j + ' to ' + thisStr + ' in week 13')
-            noReqs = 0
     if noReqs == 1:
         print('          NONE')
     noReqs = 1

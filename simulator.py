@@ -14,7 +14,7 @@ import numpy as np
 def runSim(thisLeagueDB,simNo):
     league = thisLeagueDB[0]
     weeks = thisLeagueDB[1]
-    wksPlayed = 11
+    wksPlayed = thisLeagueDB[2]
     teamKey = thisLeagueDB[3]
     
     simDB = pd.DataFrame(columns = ['entryID','simulation','team_id','team_name',
